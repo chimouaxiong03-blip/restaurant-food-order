@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ເຮືອນອາຫານລາວ 🍜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,600;1,500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<div id="image-modal" class="image-modal" onclick="closeImage()">
+  <img id="modal-img" src="" alt="preview">
+</div>
+<body>
+
+  <!-- ▸ STICKY HEADER -->
+  <header class="hdr">
+    <div class="hdr-inner wrap">
+      <div class="logo">
+        <img src="https://em-content.zobj.net/source/google/387/bowl-with-spoon_1f963.png" width="36" alt="logo"/>
+        <div>
+          <span class="logo-name">ເຮືອນອາຫານລາວ</span>
+          <span class="logo-sub">ສົ່ງທົ່ວວຽງຈັນ</span>
+        </div>
+      </div>
+      <button class="hdr-cart" id="cartBtn" onclick="openCart()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        ກະຕ່າ
+        <span class="hdr-badge" id="hdrbadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ▸ HERO -->
+  <section class="hero wrap">
+    <div class="hero-left">
+      <span class="hero-pill">🌶 ສົດໃໝ່ ທຸກວັນ</span>
+      <h1 class="hero-h1">ອາຫານລາວ<br/><span>ຮ້ອນໆ</span> ຮອດໜ້າ<br/>ເຮືອນ</h1>
+      <p class="hero-p">ສັ່ງງ່າຍ · ສ່ວຍໃຈ · ໄວທັນໃຈ</p>
+      <button class="hero-cta" onclick="document.getElementById('menu-sec').scrollIntoView({behavior:'smooth'})">
+        ເບິ່ງເມນູ &darr;
+      </button>
+    </div>
+   <div class="hero-right">
+      <div class="hero-frame" style="cursor: pointer;"
+        onmousedown="stopSlider()"
+        onmouseup="startSlider()"
+        onmouseleave="startSlider()"
+        ontouchstart="event.preventDefault(); stopSlider()"
+        ontouchend="startSlider()"
+      >
+        <img id="slider-img" src="img/food1.jpg" alt="ອາຫານລາວ" style="animation: floatImage 4s ease-in-out infinite;" onclick="openImage(this.src)"/>
+        <div class="hero-sticker">ລາຄາເລີ່ມ<br/><strong>8,000 ₭</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ▸ STATS STRIP -->
+  <div class="stats wrap">
+    <div class="stat"><strong>12+</strong><span>ເມນູ</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><strong>30 ນາທີ</strong><span>ສ່ງໄວ</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><strong>100%</strong><span>ສົດໃໝ່</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><strong>4.9 ⭐</strong><span>ຄະແນນ</span></div>
+  </div>
+
+  <!-- ▸ MENU -->
+  <section class="menu-sec wrap" id="menu-sec">
+    <div class="menu-header">
+      <h2 class="sec-title">ເມນູຂອງຮ້ານ</h2>
+
+      <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input 
+      type="text" 
+      id="searchInput" 
+      class="search-input" 
+      placeholder="ຄົ້ນຫາເມນູ..."
+      oninput="searchMenu(this.value)"
+    />
+  </div>
+      <!-- category tabs -->
+      <div class="cats" id="cats">
+        <button class="cat active" onclick="setcat('all',this)">ທັງໝົດ</button>
+        <button class="cat" onclick="setcat('ອາຫານ',this)">🍽 ອາຫານ</button>
+        <button class="cat" onclick="setcat('ກ໋ວຍ',this)">🍜 ກ໋ວຍ</button>
+        <button class="cat" onclick="setcat('ເຂົ້າ',this)">🍚 ເຂົ້າ</button>
+        <button class="cat" onclick="setcat('ດື່ມ',this)">🥤 ດື່ມ</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- ▸ CART MODAL BACKDROP -->
+  <div class="backdrop" id="backdrop" onclick="closeCart()"></div>
+
+  <!-- ▸ CART MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <h2>🛒 ກະຕ່າສັ່ງ</h2>
+      <button class="modal-x" onclick="closeCart()">✕</button>
+    </div>
+
+    <!-- cart items list -->
+    <div class="modal-items" id="modalItems"></div>
+
+    <!-- empty state -->
+    <div class="modal-empty" id="modalEmpty">
+      <div style="font-size:56px">🍽️</div>
+      <p>ກະຕ່າຍັງຫວ່າງ</p>
+      <small>ເລືອກອາຫານທີ່ທ່ານຕ້ອງການ</small>
+    </div>
+
+    <!-- summary + form -->
+    <div class="modal-foot" id="modalFoot">
+      <div class="cart-sum">
+        <span>ລວມ (<span id="sumCount">0</span> ລາຍການ)</span>
+        <span class="sum-price" id="sumPrice">0 ₭</span>
+      </div>
+
+      <div class="form-box">
+        <p class="form-ttl">📋 ຂໍ້ມູນສ່ວນຕົວ</p>
+
+        <div class="field-grp">
+          <label>👤 ຊື່ລູກຄ້າ</label>
+          <input id="fName" class="finput" type="text" placeholder="ໃສ່ຊື່ຂອງທ່ານ..."/>
+        </div>
+        <div class="field-grp">
+          <label>📞 ເບີໂທ</label>
+          <input id="fPhone" class="finput" type="tel" placeholder="020 XX XXX XXX"/>
+        </div>
+        <div class="field-grp">
+          <label>📍 ທີ່ຢູ່ / ສະຖານທີ່</label>
+          <textarea id="fAddr" class="finput ftarea" placeholder="ບ້ານ, ເມືອງ, ລາຍລະອຽດ..."></textarea>
+        </div>
+
+        <button class="btn-wa" onclick="sendWA()">
+          <svg viewBox="0 0 24 24" width="22" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          ສົ່ງຄຳສັ່ງ WhatsApp
+        </button>
+        <button class="btn-clear" onclick="clearCart()">🗑 ລ້າງກະຕ່າ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▸ TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ▸ FOOTER -->
+  <footer class="footer">
+    <p>© 2025 ເຮືອນອາຫານລາວ &nbsp;·&nbsp; ສ້າງດ້ວຍ CHIMOUA XIONG. SDT: 0299523134</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

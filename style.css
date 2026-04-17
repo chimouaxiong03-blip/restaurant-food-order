@@ -36,12 +36,6 @@ button{cursor:pointer;font-family:inherit;border:none}
 img{max-width:100%;display:block}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
 
-.wrap {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 auto;
-}
-
 /* scrollbar */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
@@ -598,4 +592,35 @@ img{max-width:100%;display:block}
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* ── HEADER NAV ─────────────────────────── */
+.hdr-nav { display: flex; gap: 24px; align-items: center; }
+.hdr-nav a { text-decoration: none; color: var(--char); font-size: 15px; font-weight: 700; transition: color 0.2s; }
+.hdr-nav a:hover { color: var(--terra); }
+
+/* ── ABOUT US ────────────────────────────── */
+.about-sec { padding: 40px 20px 60px; }
+.about-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1.2fr; 
+  gap: 40px; 
+  align-items: center; 
+  background: var(--card); 
+  padding: 40px; 
+  border-radius: var(--r2); 
+  border: 1.5px solid var(--border); 
+  box-shadow: var(--sh); 
+}
+.about-img img { width: 100%; border-radius: var(--r); object-fit: cover; aspect-ratio: 4/3; box-shadow: var(--sh2); }
+.about-text p { color: var(--txt2); margin-bottom: 16px; font-size: 15px; line-height: 1.8; }
+.about-signature { margin-top: 24px; padding-top: 20px; border-top: 2px dashed var(--border); }
+.about-signature strong { display: block; color: var(--terra); font-size: 18px; font-weight: 900; }
+.about-signature span { font-size: 13px; color: var(--txt3); }
+
+/* Chỉnh cho giao diện điện thoại */
+@media(max-width: 768px) {
+  .hide-on-mobile { display: none; }
+  .about-grid { grid-template-columns: 1fr; padding: 24px; gap: 24px; text-align: center; }
+  .about-signature { display: flex; flex-direction: column; align-items: center; }
 }

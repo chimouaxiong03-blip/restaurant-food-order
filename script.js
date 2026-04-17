@@ -9,7 +9,7 @@
    Example: "85620XXXXXXXX"
 ================================================ */
 
-const SHOP_WA = "+84 764009837"; // ← ປ່ຽນເບີໂທຮ້ານທີ່ນີ້
+const SHOP_WA = "84 0764009837"; // ← ປ່ຽນເບີໂທຮ້ານທີ່ນີ້
 
 /* ──────────────────────────────────────────────
    MENU DATA  (12 items, 4 categories)
@@ -111,7 +111,12 @@ const MENU = [
 /* ──────────────────────────────────────────────
    STATE
 ────────────────────────────────────────────── */
-let cart    = JSON.parse(localStorage.getItem("heuan_cart") || "[]");
+let cart = [];
+try {
+  cart = JSON.parse(localStorage.getItem("heuan_cart")) || [];
+} catch (e) {
+  cart = []; 
+}
 let curCat  = "all";
 let toastTm = null;
 let modalOn = false;
@@ -212,13 +217,25 @@ function removeItem(id) {
 /* ──────────────────────────────────────────────
    CLEAR CART
 ────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────
+   CLEAR CART (Đã nâng cấp Custom Modal)
+────────────────────────────────────────────── */
 function clearCart() {
   if (!cart.length) return;
-  if (!confirm("ທ່ານຕ້ອງການລ້າງກະຕ່າທັງໝົດບໍ?")) return;
+  // Bật modal tự chế thay vì dùng confirm mặc định
+  document.getElementById("confirm-modal").style.display = "flex";
+}
+
+function closeConfirm() {
+  document.getElementById("confirm-modal").style.display = "none";
+}
+
+function executeClearCart() {
   cart = [];
   save();
   refreshBadge();
   renderCartItems();
+  closeConfirm(); // Đóng modal
   showToast("🗑 ລ້າງກະຕ່າແລ້ວ");
 }
 
@@ -273,6 +290,7 @@ function openCart() {
   document.getElementById("backdrop").classList.add("on");
   document.body.style.overflow = "hidden";
   renderCartItems();
+  loadCustomerInfo();
 }
 
 function closeCart() {
@@ -313,6 +331,9 @@ function sendWA() {
     document.getElementById("fAddr").focus();
     return;
   }
+  // 3.5. Lưu thông tin khách hàng cho lần mua sau (Thầy dán vào vị trí này nhé)
+  const customerInfo = { name, phone, addr };
+  localStorage.setItem("chimoua_customer", JSON.stringify(customerInfo));
 
   // 4. Build item list
   const lines = cart
@@ -361,7 +382,7 @@ function renderMenu() {
   document.getElementById("grid").innerHTML = items.map((m, i) => `
     <div class="card" style="animation-delay:${i * 0.05}s">
       <div class="card-img">
-      <img src="${m.img}" alt="${m.name}" loading="lazy" onclick="openImage(this.src)">
+      <img src="${m.img}" alt="${m.name}" loading="lazy" onclick="openImage(this.src)"
              onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=60'"/>
         <span class="card-tag">${m.cat}</span>
         ${m.badge ? `<span class="card-badge">${m.badge}</span>` : ""}
@@ -391,17 +412,6 @@ document.addEventListener("keydown", e => {
 renderMenu();
 refreshBadge();
 
-/* HERO IMAGE SLIDER */
-const foodImages = [
-  "img/food1.jpg",
-  "img/food2.jpg",
-  "img/food3.jpg"
-];
-
-let currentIndex = 0;
-let sliderInterval = null;
-
-const sliderImg = document.getElementById("slider-img");
 
 function changeImage() {
   if (!sliderImg) return;
@@ -455,10 +465,9 @@ function searchMenu(keyword) {
       `).join("")
     : `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--txt2)">
          <div style="font-size:48px">🍽️</div>
-         <p style="margin-top:8px">ບໍ່ພົບເມນູ "<strong>${keyword}</strong>"</p>
+         <p style="margin-top:8px"> ບໍ່ພົບເມນູ "<strong>${escapeHTML(keyword)}</strong>"</p>
        </div>`;
 }
-
 //Bấm xem ảnh
 function openImage(src) {
   const modal = document.getElementById("image-modal");
@@ -470,4 +479,18 @@ function openImage(src) {
 
 function closeImage() {
   document.getElementById("image-modal").style.display = "none";
+}
+
+/* ──────────────────────────────────────────────
+   SMART FORM - Tự động điền thông tin
+────────────────────────────────────────────── */
+function loadCustomerInfo() {
+  try {
+    const info = JSON.parse(localStorage.getItem("chimoua_customer") || "{}");
+    if (info.name) document.getElementById("fName").value = info.name;
+    if (info.phone) document.getElementById("fPhone").value = info.phone;
+    if (info.addr) document.getElementById("fAddr").value = info.addr;
+  } catch (e) {
+    console.log("Lỗi tải thông tin khách hàng");
+  }
 }
